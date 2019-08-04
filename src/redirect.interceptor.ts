@@ -32,7 +32,7 @@ export class RedirectInterceptor implements NestInterceptor {
   }
 
   isRedirect(obj: any): boolean {
-    if (obj.hasOwnProperty('statusCode') && obj.hasOwnProperty('url')) {
+    if (obj && obj.hasOwnProperty('statusCode') && obj.hasOwnProperty('url')) {
       return true;
     }
     return false;
