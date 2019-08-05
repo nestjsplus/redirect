@@ -1,6 +1,6 @@
 {
   "name": "@nestjsplus/redirect",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Decorator for handling Redirects with NestJS",
   "author": "John Biundo <johnfbiundo@gmail.com>",
   "license": "MIT",
