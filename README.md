@@ -22,7 +22,7 @@
 npm install @nestjsplus/redirect
 ```
 
-### Motivation
+### Examples
 NestJS doesn't currently have a decorator for doing redirects on route handlers.
 Here's how it looks with this decorator:
 
@@ -34,11 +34,22 @@ nest() {
 }
 ```
 
+Here's how it looks when the redirect response is determined *dynamically*:
+```typescript
+@Redirect()
+@Get('/somelocation')
+index() {
+  const url = this.getNewLocation();
+  return { statusCode: HttpStatus.FOUND, url };
+}
+```
+
+### Motivation
 To do a redirect with Nest out-of-the-box, you either need to utilize the platform-specific
 response (`res`) object, or write an interceptor. The former is pretty straightforward, though
-takes a non-Nest-like imperative style.  It also puts you into
+uses a non-Nest-like imperative style.  It also puts you into
 [manual response mode](https://docs.nestjs.com/controllers#routing),
-meaning you can no longer rely on features like `@Render()`, `@HttpCode()` or [interceptors that modify the response](https://docs.nestjs.com/interceptors#response-mapping), and making testing harder (you'll have to mock the response
+meaning you can no longer rely on features like `@Render()`, `@HttpCode()` or [interceptors that modify the response](https://docs.nestjs.com/interceptors#response-mapping), and makes testing harder (you'll have to mock the response
 object, etc.).
 
 Writing an interceptor isn't too bad, but wouldn't you rather just plug one in? :heart:
@@ -47,7 +58,7 @@ in a declarative decorator that does this for you.
 
 ### See Also
 If you like this little gizmo, you may also be interested in the [NestJS Cookie
-decorators](https://github.com/nestsjsplus/cookies).
+decorators](https://github.com/nestjsplus/cookies).
 
 Collectively, the `@Redirect(), @Cookies()`, `@SignedCookies()`, `@SetCookies()`
 and `@ClearCookies()` decorators in these packages
@@ -58,8 +69,7 @@ mutate the response.
 
 ### Importing the Decorator
 Import the decorator, just as you would other Nest decorators, in the controllers
-that use it.  Use `import { Redirect } from @nestjsplus/redirect` as shown
-below:
+that use it as shown below:
 
 ```typescript
 import { Controller, Get } from '@nestjs/common';
@@ -72,8 +82,8 @@ export class AppController {
 ```
 
 ### Static Redirects
-For static redirects, where the `statusCode` and `url` (AKA `location`) are known at
-compile time, simply specify them in the decorator:
+For static redirects, where the `statusCode` and `url` (AKA `location` in the
+response headers) are known at compile time, simply specify them in the decorator:
 
 ```typescript
 @Redirect({statusCode: HttpStatus.TEMPORARY_REDIRECT, url: 'https://nestjs.com'})
@@ -83,11 +93,11 @@ nest {
 }
 ```
 ### Dynamic Redirects
-For dynamic redirects, where the `statusCode` and/or `url` (AKA `location`) are
-computed in the route handler method, simply return an object from the method with
+For dynamic redirects, where the `statusCode` and/or `url` are
+computed in the route handler method, return an object from the method with
 the shape:
 
-```typsecript
+```typescript
 interface RedirectOptions {
   /**
    * URL to redirect to.
@@ -99,19 +109,21 @@ interface RedirectOptions {
   statusCode: number;
 }
 ```
+
 For example:
 
 ```typescript
 @Redirect()
-@Get('/google')
-google() {
-  return { statusCode: HttpStatus.FOUND, url: 'https://www.google.com' };
+@Get('/somelocation')
+index() {
+  const url = this.getNewLocation();
+  return { statusCode: HttpStatus.FOUND, url };
 }
 ```
 
 ### Recommendations
-Utilize the `HttpStatus` enum from the `@nestjs/common` package to ensure you use
-the correct Http Status Codes, and to get convenient "intellisense"/autocompletion.
+Utilize the `HttpStatus` enum from the `@nestjs/common` package to ensure you send
+the correct Http Status Codes, and to get convenient intellisense.
 
 ### Restrictions
 #### Express Only
