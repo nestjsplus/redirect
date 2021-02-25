@@ -50,4 +50,13 @@ describe('AppController (e2e)', () => {
       .get('/test4')
       .expect(HttpStatus.NOT_IMPLEMENTED);
   });
+
+  it('/test5 should passthrough the result', () => {
+    return request(app.getHttpServer())
+      .get('/test5')
+      .expect(HttpStatus.OK)
+      .expect(res => {
+        expect((res.body || {}).hello).toEqual('world');
+      });
+  });
 });

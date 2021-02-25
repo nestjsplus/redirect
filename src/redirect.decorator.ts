@@ -8,11 +8,16 @@ export interface RedirectOptions {
   /**
    * URL to redirect to.
    */
-  url: string;
+  url?: string;
   /**
    * HTTP Status Code to send.
    */
-  statusCode: number;
+  statusCode?: number;
+  /**
+   * Accept optional redirect
+   * If not matching redirect options- path returned value further
+   */
+  optionalRedirect?: boolean;
 }
 
 /**
@@ -36,6 +41,7 @@ export interface RedirectOptions {
  * @param options RedirectOptions
  * @param options.url URL to redirect to
  * @param options.statusCode HTTP Status Code to send
+ * @param options.optionalRedirect Accept optional redirect
  */
 export const Redirect = (options?: RedirectOptions) => {
   return (target, propertyKey, descriptor) => {

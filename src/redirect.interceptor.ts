@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Response } from 'express';
+import { RedirectOptions } from './redirect.decorator';
 
 @Injectable()
 export class RedirectInterceptor implements NestInterceptor {
@@ -17,17 +18,19 @@ export class RedirectInterceptor implements NestInterceptor {
     const ctx = context.switchToHttp();
     const response = ctx.getResponse<Response>();
     const handler = context.getHandler();
-    const options = Reflect.getMetadata('redirectOptions', handler);
+    const options = (Reflect.getMetadata('redirectOptions', handler) ||
+      {}) as RedirectOptions;
     const res$ = next.handle();
     return res$.toPromise().then(result => {
       if (result && this.isRedirect(result)) {
-        response.redirect(result.statusCode, result.url);
+        return response.redirect(result.statusCode, result.url);
       } else if (this.isRedirect(options)) {
-        response.redirect(options.statusCode, options.url);
-      } else {
+        return response.redirect(options.statusCode, options.url);
+      } else if (options.optionalRedirect !== true) {
         throw new NotImplementedException();
       }
-      return undefined;
+
+      return result;
     });
   }
 
