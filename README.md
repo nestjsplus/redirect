@@ -44,6 +44,20 @@ index() {
 }
 ```
 
+Sometimes you want to pass a response rather than redirecting:
+```typescript
+@Redirect({ optionalRedirect: true })
+@Get('/maybe-redirect')
+index() {
+  if (someOption) {
+    return { hello: 'world' };
+  }
+
+  const url = this.getNewLocation();
+  return { statusCode: HttpStatus.FOUND, url };
+}
+```
+
 ### Motivation
 To do a redirect with Nest out-of-the-box, you either need to utilize the platform-specific
 response (`res`) object, or write an interceptor. The former is pretty straightforward, though
