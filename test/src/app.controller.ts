@@ -34,4 +34,10 @@ export class AppController {
   test4() {
     return;
   }
+
+  @Redirect({ optionalRedirect: true })
+  @Get('/test5')
+  test5() {
+    return { hello: 'world' };
+  }
 }
